@@ -96,8 +96,12 @@ webpackConfig = {
 if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 	webpackConfig.output.filename = '[name].js';
 } else {
+	webpackConfig.entry.polyfill = [ path.join( __dirname, 'client', 'lib', 'polyfill' ) ];
 	webpackConfig.entry.vendor = [ 'react', 'store', 'page', 'wpcom', 'jed', 'debug' ];
-	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( 'vendor', '[name].[hash].js' ) );
+	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( {
+		names: [ 'vendor', 'polyfill' ],
+		minChunks: Infinity
+	} ) );
 	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( {
 		children: true,
 		minChunks: Math.floor( sectionCount * 0.25 ),

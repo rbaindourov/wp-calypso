@@ -1,6 +1,3 @@
-// Initialize localStorage polyfill before any dependencies are loaded
-require( 'lib/local-storage' )();
-
 /**
  * External dependencies
  */
