@@ -51,9 +51,9 @@ module.exports = {
 		datestamp: '20160802',
 		variations: {
 			clickableRow: 20,
-			nonClickableRow: 80
+			clickableButton: 80
 		},
-		defaultVariation: 'nonClickableRow'
+		defaultVariation: 'clickableButton'
 	},
 	freeTrialNudgeOnThankYouPage: {
 		datestamp: '20200328',
