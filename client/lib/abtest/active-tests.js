@@ -47,6 +47,14 @@ module.exports = {
 		},
 		defaultVariation: 'namegen'
 	},
+	domainSuggestionClickableRow: {
+		datestamp: '20160802',
+		variations: {
+			clickableRow: 20,
+			nonClickableRow: 80
+		},
+		defaultVariation: 'nonClickableRow'
+	},
 	freeTrialNudgeOnThankYouPage: {
 		datestamp: '20200328',
 		variations: {
