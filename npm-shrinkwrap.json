@@ -1418,8 +1418,7 @@
       "version": "2.0.0"
     },
     "global": {
-      "version": "2.0.1",
-      "resolved": "https://github.com/component/global/archive/v2.0.1.tar.gz"
+      "version": "2.0.1"
     },
     "globals": {
       "version": "8.18.0"
@@ -3720,8 +3719,7 @@
       "version": "2.0.1"
     },
     "xmlhttprequest": {
-      "version": "1.5.0",
-      "resolved": "https://github.com/rase-/node-XMLHttpRequest/archive/a6b6f2.tar.gz"
+      "version": "1.5.0"
     },
     "xregexp": {
       "version": "3.1.1"
@@ -3743,6 +3741,38 @@
       "dependencies": {
         "camelcase": {
           "version": "3.0.0"
+        }
+      }
+    },
+    "draft-js": {
+      "version": "0.7.0",
+      "dependencies": {
+        "fbjs": {
+          "version": "0.8.3",
+          "dependencies": {
+            "core-js": {
+              "version": "1.2.7"
+            },
+            "isomorphic-fetch": {
+              "version": "2.2.1",
+              "dependencies": {
+                "whatwg-fetch": {
+                  "version": "1.0.0"
+                },
+                "node-fetch": {
+                  "version": "1.6.0",
+                  "dependencies": {
+                    "encoding": {
+                      "version": "0.1.12"
+                    },
+                    "is-stream": {
+                      "version": "1.1.0"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }

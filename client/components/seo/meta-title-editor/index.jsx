@@ -2,6 +2,14 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import {
+	AtomicBlockUtils,
+	Editor,
+	EditorState,
+	Entity,
+	RichUtils,
+	convertToRaw
+} from 'draft-js';
 import { connect } from 'react-redux';
 import {
 	difference,
@@ -69,6 +77,37 @@ const tokenize = translate => value => {
 		: { type, value };
 };
 
+class Chip extends Component {
+	constructor( props ) {
+		super( props );
+	}
+
+	render() {
+		const { block, blockProps } = this.props;
+		const data = Entity.get( block.getEntityAt(0) ).getData();
+
+		return (
+			<span style={ { fontColor: 'red', fontSize: '18px' } }>
+				{ data && data.type }
+			</span>
+		);
+	}
+}
+
+const blockRenderer = block => {
+	const type = block.getType();
+
+	if ( 'atomic' !== type ) {
+		return;
+	}
+
+	return {
+		component: Chip,
+		editable: false,
+		props: {}
+	}
+};
+
 export class MetaTitleEditor extends Component {
 	constructor( props ) {
 		super( props );
@@ -76,12 +115,31 @@ export class MetaTitleEditor extends Component {
 		const { titleFormats } = props;
 
 		this.state = {
+			editorState: EditorState.createEmpty(),
 			titleFormats,
 			type: 'frontPage'
 		};
 
 		this.switchType = this.switchType.bind( this );
 		this.updateTitleFormat = this.updateTitleFormat.bind( this );
+
+		this.updateEditor = editorState => this.setState( { editorState } );
+
+		this.addChip = type => () => {
+			const entityKey = Entity.create( 'chip', 'IMMUTABLE', { type } );
+
+			this.setState( {
+				editorState: AtomicBlockUtils.insertAtomicBlock(
+					this.state.editorState,
+					entityKey,
+					' '
+				)
+			}, () => {
+				console.log( convertToRaw(
+					this.state.editorState.getCurrentContent()
+				) );
+			} );
+		};
 	}
 
 	componentWillUpdate( nextProps ) {
@@ -113,7 +171,7 @@ export class MetaTitleEditor extends Component {
 
 	render() {
 		const { disabled, translate } = this.props;
-		const { type, titleFormats } = this.state;
+		const { editorState, type, titleFormats } = this.state;
 
 		const validTokens = getValidTokens( translate );
 
@@ -131,6 +189,17 @@ export class MetaTitleEditor extends Component {
 
 		return (
 			<div className="meta-title-editor">
+				<div style={ { border: '1px solid red', margin: '10px', padding: '10px' } }>
+					<div>
+						<span onClick={ this.addChip( 'siteName' ) } style={ { background: 'lightblue', marginRight: '10px' } }>Site Name</span>
+						<span onClick={ this.addChip( 'tagline' ) } style={ { background: 'lightblue', marginRight: '10px' } }>Tagline</span>
+					</div>
+					<Editor { ...{
+						blockRendererFn: blockRenderer,
+						editorState,
+						onChange: this.updateEditor
+					} } />
+				</div>
 				<SegmentedControl
 					initialSelected={ type }
 					options={ titleTypes( translate ) }
