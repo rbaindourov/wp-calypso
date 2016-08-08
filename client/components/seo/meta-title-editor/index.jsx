@@ -4,9 +4,12 @@
 import React, { Component, PropTypes } from 'react';
 import {
 	AtomicBlockUtils,
+	CompositeDecorator,
+	ContentState,
 	Editor,
 	EditorState,
 	Entity,
+	Modifier,
 	RichUtils,
 	convertToRaw
 } from 'draft-js';
@@ -80,33 +83,65 @@ const tokenize = translate => value => {
 class Chip extends Component {
 	constructor( props ) {
 		super( props );
+
+		this.state = {
+			isHovering: false
+		};
+
+		this.setHover = isHovering => this.setState( { isHovering } );
+		this.hoverOn = this.setHover.bind( this, true );
+		this.hoverOff = this.setHover.bind( this, false );
 	}
 
 	render() {
-		const { block, blockProps } = this.props;
-		const data = Entity.get( block.getEntityAt(0) ).getData();
+		const { entityKey } = this.props;
+		const { isHovering } = this.state;
+
+		const instance = Entity.get( entityKey );
+		const { type } = instance.getData();
+
+		const baseStyle = {
+			color: '#c00',
+			fontSize: '18px'
+		};
+
+		const style = {
+			...baseStyle,
+			...(isHovering ? { backgroundColor: '#08c' } : {} )
+		};
 
 		return (
-			<span style={ { fontColor: 'red', fontSize: '18px' } }>
-				{ data && data.type }
+			<span
+				contentEditable={ false }
+				style={ style }
+				onMouseEnter={ this.hoverOn }
+				onMouseLeave={ this.hoverOff }
+			>
+				{ type }
 			</span>
 		);
 	}
 }
 
-const blockRenderer = block => {
-	const type = block.getType();
+function getEntityStrategy(mutability) {
+	return function(contentBlock, callback) {
+		contentBlock.findEntityRanges(
+			(character) => {
+				const entityKey = character.getEntity();
+				if (entityKey === null) {
+					return false;
+				}
+				return Entity.get(entityKey).getMutability() === mutability;
+			},
+			callback
+		);
+	};
+}
 
-	if ( 'atomic' !== type ) {
-		return;
-	}
-
-	return {
-		component: Chip,
-		editable: false,
-		props: {}
-	}
-};
+const decorator = new CompositeDecorator( [ {
+	strategy: getEntityStrategy( 'IMMUTABLE' ),
+	component: Chip
+} ] );
 
 export class MetaTitleEditor extends Component {
 	constructor( props ) {
@@ -115,7 +150,7 @@ export class MetaTitleEditor extends Component {
 		const { titleFormats } = props;
 
 		this.state = {
-			editorState: EditorState.createEmpty(),
+			editorState: ContentState.createFromText(''),
 			titleFormats,
 			type: 'frontPage'
 		};
@@ -123,23 +158,38 @@ export class MetaTitleEditor extends Component {
 		this.switchType = this.switchType.bind( this );
 		this.updateTitleFormat = this.updateTitleFormat.bind( this );
 
-		this.updateEditor = editorState => this.setState( { editorState } );
+		this.updateEditor = editorState => this.setState( {
+			editorState: EditorState.set( editorState, { decorator } )
+		} );
 
-		this.addChip = type => () => {
+		this.addChip = this.addChip.bind( this );
+	}
+
+	addChip( type ) {
+		return function() {
 			const entityKey = Entity.create( 'chip', 'IMMUTABLE', { type } );
 
+			const { editorState } = this.state;
+
+			const currentContent = editorState.getCurrentContent();
+			const selection = editorState.getSelection();
+
+			const chip = Modifier.insertText(
+				currentContent,
+				selection,
+				' ',
+				null,
+				entityKey
+			);
+
 			this.setState( {
-				editorState: AtomicBlockUtils.insertAtomicBlock(
-					this.state.editorState,
-					entityKey,
-					' '
-				)
-			}, () => {
-				console.log( convertToRaw(
-					this.state.editorState.getCurrentContent()
-				) );
+				editorState: EditorState.moveFocusToEnd( EditorState.push(
+					editorState,
+					chip,
+					'insert-text'
+				) )
 			} );
-		};
+		}.bind( this );
 	}
 
 	componentWillUpdate( nextProps ) {
@@ -195,7 +245,6 @@ export class MetaTitleEditor extends Component {
 						<span onClick={ this.addChip( 'tagline' ) } style={ { background: 'lightblue', marginRight: '10px' } }>Tagline</span>
 					</div>
 					<Editor { ...{
-						blockRendererFn: blockRenderer,
 						editorState,
 						onChange: this.updateEditor
 					} } />
