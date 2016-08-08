@@ -13,6 +13,7 @@ import AccordionSection from 'components/accordion/section';
 import Gridicon from 'components/gridicon';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
 import CategoryListData from 'components/data/category-list-data';
+import CopyPostAccordion from 'post-editor/copy-post/accordion';
 import TagListData from 'components/data/tag-list-data';
 import EditorSharingAccordion from 'post-editor/editor-sharing/accordion';
 import FormTextarea from 'components/forms/form-textarea';
@@ -262,8 +263,19 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderCopyPost: function() {
+<<<<<<< HEAD
 		return (
 			<EditorDrawerCopyPost />
+=======
+		const { type, post, site } = this.props;
+
+		return (
+			<CopyPostAccordion
+				type={ type }
+				post={ post }
+				site={ site }
+			/>
+>>>>>>> 859a87e... Add the Copy Post accordion to the Editor Drawer
 		);
 	},
 
