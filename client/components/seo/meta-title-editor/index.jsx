@@ -2,17 +2,6 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import {
-	AtomicBlockUtils,
-	CompositeDecorator,
-	ContentState,
-	Editor,
-	EditorState,
-	Entity,
-	Modifier,
-	RichUtils,
-	convertToRaw
-} from 'draft-js';
 import { connect } from 'react-redux';
 import {
 	difference,
@@ -33,6 +22,7 @@ import {
  * Internal dependencies
  */
 import SegmentedControl from 'components/segmented-control';
+import TitleFormatEditor from 'components/title-format-editor';
 import TokenField from 'components/token-field';
 import { getSeoTitleFormats } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -80,69 +70,6 @@ const tokenize = translate => value => {
 		: { type, value };
 };
 
-class Chip extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			isHovering: false
-		};
-
-		this.setHover = isHovering => this.setState( { isHovering } );
-		this.hoverOn = this.setHover.bind( this, true );
-		this.hoverOff = this.setHover.bind( this, false );
-	}
-
-	render() {
-		const { entityKey } = this.props;
-		const { isHovering } = this.state;
-
-		const instance = Entity.get( entityKey );
-		const { type } = instance.getData();
-
-		const baseStyle = {
-			color: '#c00',
-			fontSize: '18px'
-		};
-
-		const style = {
-			...baseStyle,
-			...(isHovering ? { backgroundColor: '#08c' } : {} )
-		};
-
-		return (
-			<span
-				contentEditable={ false }
-				style={ style }
-				onMouseEnter={ this.hoverOn }
-				onMouseLeave={ this.hoverOff }
-			>
-				{ type }
-			</span>
-		);
-	}
-}
-
-function getEntityStrategy(mutability) {
-	return function(contentBlock, callback) {
-		contentBlock.findEntityRanges(
-			(character) => {
-				const entityKey = character.getEntity();
-				if (entityKey === null) {
-					return false;
-				}
-				return Entity.get(entityKey).getMutability() === mutability;
-			},
-			callback
-		);
-	};
-}
-
-const decorator = new CompositeDecorator( [ {
-	strategy: getEntityStrategy( 'IMMUTABLE' ),
-	component: Chip
-} ] );
-
 export class MetaTitleEditor extends Component {
 	constructor( props ) {
 		super( props );
@@ -150,46 +77,12 @@ export class MetaTitleEditor extends Component {
 		const { titleFormats } = props;
 
 		this.state = {
-			editorState: ContentState.createFromText(''),
 			titleFormats,
 			type: 'frontPage'
 		};
 
 		this.switchType = this.switchType.bind( this );
 		this.updateTitleFormat = this.updateTitleFormat.bind( this );
-
-		this.updateEditor = editorState => this.setState( {
-			editorState: EditorState.set( editorState, { decorator } )
-		} );
-
-		this.addChip = this.addChip.bind( this );
-	}
-
-	addChip( type ) {
-		return function() {
-			const entityKey = Entity.create( 'chip', 'IMMUTABLE', { type } );
-
-			const { editorState } = this.state;
-
-			const currentContent = editorState.getCurrentContent();
-			const selection = editorState.getSelection();
-
-			const chip = Modifier.insertText(
-				currentContent,
-				selection,
-				' ',
-				null,
-				entityKey
-			);
-
-			this.setState( {
-				editorState: EditorState.moveFocusToEnd( EditorState.push(
-					editorState,
-					chip,
-					'insert-text'
-				) )
-			} );
-		}.bind( this );
 	}
 
 	componentWillUpdate( nextProps ) {
@@ -221,7 +114,7 @@ export class MetaTitleEditor extends Component {
 
 	render() {
 		const { disabled, translate } = this.props;
-		const { editorState, type, titleFormats } = this.state;
+		const { type, titleFormats } = this.state;
 
 		const validTokens = getValidTokens( translate );
 
@@ -239,16 +132,7 @@ export class MetaTitleEditor extends Component {
 
 		return (
 			<div className="meta-title-editor">
-				<div style={ { border: '1px solid red', margin: '10px', padding: '10px' } }>
-					<div>
-						<span onClick={ this.addChip( 'siteName' ) } style={ { background: 'lightblue', marginRight: '10px' } }>Site Name</span>
-						<span onClick={ this.addChip( 'tagline' ) } style={ { background: 'lightblue', marginRight: '10px' } }>Tagline</span>
-					</div>
-					<Editor { ...{
-						editorState,
-						onChange: this.updateEditor
-					} } />
-				</div>
+				<TitleFormatEditor />
 				<SegmentedControl
 					initialSelected={ type }
 					options={ titleTypes( translate ) }
