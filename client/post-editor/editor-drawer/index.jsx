@@ -13,7 +13,6 @@ import AccordionSection from 'components/accordion/section';
 import Gridicon from 'components/gridicon';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
 import CategoryListData from 'components/data/category-list-data';
-import CopyPostAccordion from 'post-editor/copy-post/accordion';
 import TagListData from 'components/data/tag-list-data';
 import EditorSharingAccordion from 'post-editor/editor-sharing/accordion';
 import FormTextarea from 'components/forms/form-textarea';
@@ -270,7 +269,7 @@ const EditorDrawer = React.createClass( {
 		const { type, post, site } = this.props;
 
 		return (
-			<CopyPostAccordion
+			<EditorDrawerCopyPost
 				type={ type }
 				post={ post }
 				site={ site }
