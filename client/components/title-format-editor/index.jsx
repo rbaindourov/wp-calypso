@@ -23,6 +23,17 @@ const editorStyle = {
 	borderRadius: '3px'
 };
 
+const isFocusedOnAtom = editorState => {
+	const selection = editorState.getSelection();
+	const blockKey = selection.getFocusKey();
+	const focusOffset = selection.getFocusOffset();
+	const contentState = editorState.getCurrentContent();
+	const block = contentState.getBlockForKey( blockKey );
+	const entity = block.getEntityAt( focusOffset );
+
+	return !! entity && 'ATOM' === Entity.get( entity ).type;
+};
+
 export class TitleFormatEditor extends Component {
 	constructor( props ) {
 		super( props );
@@ -31,25 +42,40 @@ export class TitleFormatEditor extends Component {
 			editorState: EditorState.createEmpty()
 		};
 
-		this.onChange = editorState => this.setState( { editorState }, console.log( convertToRaw( this.state.editorState.getCurrentContent() ) ) );
-
+		this.onChange = this.onChange.bind( this );
 		this.addEntity = this.addEntity.bind( this );
 	}
 
-	addEntity() {
-		const { editorState } = this.state;
+	onChange( editorState ) {
+		if ( isFocusedOnAtom( editorState ) ) {
+			console.log( 'In an atom, aborting!' );
+		}
 
-		const atomizer = Entity.create( 'ATOM', 'IMMUTABLE' );
+		this.setState(
+			{ editorState },
+			() => {
+				console.log( convertToRaw( this.state.editorState.getCurrentContent() ) );
+				console.log( this.state.editorState.toJS() );
+			}
+		);
+	}
 
-		this.onChange( EditorState.push(
-			editorState,
-			Modifier.applyEntity(
-				editorState.getCurrentContent(),
-				editorState.getSelection(),
-				atomizer
-			),
-			'apply-entity'
-		) );
+	addEntity( name ) {
+		return () => {
+			const { editorState } = this.state;
+
+			const atomizer = Entity.create( 'ATOM', 'IMMUTABLE', { name } );
+
+			this.onChange( EditorState.push(
+				editorState,
+				Modifier.applyEntity(
+					editorState.getCurrentContent(),
+					editorState.getSelection(),
+					atomizer
+				),
+				'apply-entity'
+			) );
+		};
 	}
 
 	render() {
@@ -58,12 +84,12 @@ export class TitleFormatEditor extends Component {
 		return (
 			<div style={ editorStyle }>
 				<div style={ { marginBottom: '10px' } }>
-					<span style={ buttonStyle } onClick={ this.addEntity }>Entity</span>
+					<span style={ buttonStyle } onClick={ this.addEntity( 'Site Name' ) }>Site Name</span>
+					<span style={ buttonStyle } onClick={ this.addEntity( 'Tagline' ) }>Tagline</span>
 				</div>
 				<Editor
 					editorState={ editorState }
 					onChange={ this.onChange }
-					placeholder="Enter your site title here…"
 				/>
 			</div>
 		);
