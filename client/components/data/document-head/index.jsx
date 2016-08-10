@@ -9,6 +9,7 @@ import isEqual from 'lodash/isEqual';
 /**
  * Internal dependencies.
  */
+import { getFormattedTitle } from 'state/document-head/selectors';
 import {
 	setDocumentHeadTitle as setTitle,
 	setDocumentHeadDescription as setDescription,
@@ -46,6 +47,11 @@ class DocumentHead extends Component {
 		} );
 	}
 
+	componentDidMount() {
+		const { formattedTitle } = this.props;
+		document.title = formattedTitle;
+	}
+
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.title !== nextProps.title ) {
 			this.props.setTitle( nextProps.title );
@@ -69,6 +75,10 @@ class DocumentHead extends Component {
 			each( nextProps.meta, ( meta ) => {
 				this.props.addMeta( meta );
 			} );
+		}
+
+		if ( nextProps.formattedTitle !== this.props.formattedTitle ) {
+			document.title = nextProps.formattedTitle;
 		}
 	}
 
@@ -94,7 +104,9 @@ DocumentHead.propTypes = {
 };
 
 export default connect(
-	null,
+	state => ( {
+		formattedTitle: getFormattedTitle( state )
+	} ),
 	{
 		setTitle,
 		setDescription,
