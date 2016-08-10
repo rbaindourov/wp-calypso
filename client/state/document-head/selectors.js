@@ -7,7 +7,8 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import { decodeEntities } from 'lib/formatting';
-import { getSelectedSite, getSectionGroup } from 'state/ui/selectors';
+import { getSelectedSiteId, getSectionGroup } from 'state/ui/selectors';
+import { getSiteTitle } from 'state/sites/selectors';
 
 /**
  * Returns the document title as set by the DocumentHead component or setTitle
@@ -41,7 +42,8 @@ export function getFormattedTitle( state ) {
 	const siteSpecificGroups = [ 'sites', 'editor' ];
 	const title = getTitle( state );
 	const unreadCount = getUnreadCount( state );
-	const site = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
+	const siteTitle = getSiteTitle( state, siteId );
 
 	const titleParts = [];
 
@@ -50,8 +52,8 @@ export function getFormattedTitle( state ) {
 	}
 
 	// Display site name as title part only if we're in 'My Sites'
-	if ( includes( siteSpecificGroups, getSectionGroup( state ) ) && site ) {
-		titleParts.push( title + ' \u2039 ' + site.title );
+	if ( includes( siteSpecificGroups, getSectionGroup( state ) ) && siteId ) {
+		titleParts.push( title + ' \u2039 ' + siteTitle );
 	} else {
 		titleParts.push( title );
 	}
