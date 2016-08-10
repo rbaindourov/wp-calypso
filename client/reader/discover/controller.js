@@ -8,7 +8,7 @@ import React from 'react';
  */
 import config from 'config';
 import route from 'lib/route';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
@@ -25,7 +25,7 @@ export default {
 			feedStore = feedStreamFactory( 'site:' + blogId ),
 			mcKey = 'discover';
 
-		titleActions.setTitle( 'Discover' );
+		context.store.dispatch( setTitle( 'Discover' ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		ensureStoreLoading( feedStore, context );
 

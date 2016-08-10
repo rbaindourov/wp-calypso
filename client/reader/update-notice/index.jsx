@@ -9,7 +9,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var titleActions = require( 'lib/screen-title/actions' ),
+var DocumentHead = require( 'components/data/document-head' ),
 	Gridicon = require( 'components/gridicon' );
 
 var UpdateNotice = React.createClass( {
@@ -24,18 +24,6 @@ var UpdateNotice = React.createClass( {
 		return { onClick: noop };
 	},
 
-	componentDidMount: function() {
-		this.setCount();
-	},
-
-	componentDidUpdate: function() {
-		this.setCount();
-	},
-
-	setCount: function() {
-		titleActions.setCount( this.props.count ? this.countString() : false );
-	},
-
 	countString: function() {
 		return this.props.count >= 40 ? '40+' : ( '' + this.props.count );
 	},
@@ -48,6 +36,7 @@ var UpdateNotice = React.createClass( {
 
 		return (
 			<div className={ counterClasses } onTouchTap={ this.handleClick } >
+				<DocumentHead unreadCount={ this.props.count ? this.countString() : '' } />
 				<Gridicon icon="arrow-up" size={ 18 } />
 				{ this.translate( '%s new post', '%s new posts', { args: [ this.countString() ], count: this.props.count } ) }
 			</div>

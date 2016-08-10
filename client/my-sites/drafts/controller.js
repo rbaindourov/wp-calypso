@@ -10,7 +10,7 @@ var ReactDom = require( 'react-dom' ),
  */
 var sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
-	titleActions = require( 'lib/screen-title/actions' );
+	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle;
 
 module.exports = {
 
@@ -18,7 +18,7 @@ module.exports = {
 		var Drafts = require( 'my-sites/drafts/main' ),
 			siteID = route.getSiteFragment( context.path );
 
-		titleActions.setTitle( i18n.translate( 'Drafts', { textOnly: true } ), { siteID: siteID } );
+		context.store.dispatch( setTitle( i18n.translate( 'Drafts', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		ReactDom.render(
 			React.createElement( Drafts, {

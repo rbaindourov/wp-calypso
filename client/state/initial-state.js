@@ -9,6 +9,7 @@ import throttle from 'lodash/throttle';
  * Internal dependencies
  */
 import { createReduxStore, reducer } from 'state';
+import { getFormattedTitle } from 'state/document-head/selectors';
 import {
 	SERIALIZE,
 	DESERIALIZE,
@@ -87,16 +88,29 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 	return reduxStore;
 }
 
+// This can't be a middleware as those are invoked before the reducer that
+// updates title, unreadCount etc to their new values -- so we wouldn't be able
+// to use the selector within a middleware.
+export function subscribeDocumentTitle( reduxStore ) {
+	reduxStore.subscribe( function() {
+		const formattedTitle = getFormattedTitle( reduxStore.getState() );
+		if ( formattedTitle !== document.title ) {
+			document.title = formattedTitle;
+		}
+	} );
+	return reduxStore;
+}
+
 export default function createReduxStoreFromPersistedInitialState( reduxStoreReady ) {
 	if ( config.isEnabled( 'persist-redux' ) && ! isSupportUserSession() ) {
 		localforage.getItem( 'redux-state' )
 			.then( loadInitialState )
 			.catch( loadInitialStateFailed )
 			.then( persistOnChange )
+			.then( subscribeDocumentTitle )
 			.then( reduxStoreReady );
 	} else {
 		debug( 'persist-redux is not enabled, building state from scratch' );
-		reduxStoreReady( loadInitialState( {} ) );
+		reduxStoreReady( subscribeDocumentTitle( loadInitialState( {} ) ) );
 	}
 }
-
