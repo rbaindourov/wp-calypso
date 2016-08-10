@@ -117,6 +117,30 @@ describe( 'selectors', () => {
 				expect( formattedTitle ).to.equal( 'Themes — WordPress.com' );
 			} );
 
+			it( 'should return formatted title made up of site only, for unset title', () => {
+				const formattedTitle = getFormattedTitle( {
+					documentHead: {
+					},
+					sites: {
+						items: {
+							2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'http://yourgroovydomain.com' }
+						}
+					},
+					ui: {
+						selectedSiteId: 2916284,
+						section: {
+							name: 'themes',
+							paths: [ '/design' ],
+							module: 'my-sites/themes',
+							group: 'sites',
+							secondary: true
+						}
+					}
+				} );
+
+				expect( formattedTitle ).to.equal( 'WordPress.com Example Blog — WordPress.com' );
+			} );
+
 			it( 'should return formatted title made up of section and site name', () => {
 				const formattedTitle = getFormattedTitle( {
 					documentHead: {
