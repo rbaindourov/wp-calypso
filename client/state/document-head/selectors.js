@@ -39,11 +39,8 @@ export function getUnreadCount( state ) {
  * @return {?String}        Formatted title
  */
 export function getFormattedTitle( state ) {
-	const siteSpecificGroups = [ 'sites', 'editor' ];
-	const title = getTitle( state );
 	const unreadCount = getUnreadCount( state );
-	const siteId = getSelectedSiteId( state );
-	const siteTitle = getSiteTitle( state, siteId );
+	const titleAndSiteName = getTitleAndSiteName( state );
 
 	const titleParts = [];
 
@@ -51,13 +48,29 @@ export function getFormattedTitle( state ) {
 		titleParts.push( '(' + unreadCount + ')' );
 	}
 
-	// Display site name as title part only if we're in 'My Sites'
-	if ( includes( siteSpecificGroups, getSectionGroup( state ) ) && siteId ) {
-		titleParts.push( title + ' \u2039 ' + siteTitle );
-	} else {
-		titleParts.push( title );
+	if ( titleAndSiteName ) {
+		titleParts.push( titleAndSiteName );
 	}
 
 	const leftTitlePart = titleParts.join( ' ' );
 	return [ decodeEntities( leftTitlePart ), 'WordPress.com' ].join( ' — ' );
+}
+
+function getTitleAndSiteName( state ) {
+	const siteSpecificGroups = [ 'sites', 'editor' ];
+	const title = getTitle( state );
+	const siteId = getSelectedSiteId( state );
+	const siteTitle = getSiteTitle( state, siteId );
+	const titleParts = [];
+
+	if ( title ) {
+		titleParts.push( title );
+	}
+
+	// Display site name as title part only if we're in 'My Sites'
+	if ( includes( siteSpecificGroups, getSectionGroup( state ) ) && siteId ) {
+		titleParts.push( siteTitle );
+	}
+
+	return titleParts.join( ' \u2039 ' );
 }
