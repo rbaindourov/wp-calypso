@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import {
+	AtomicBlockUtils,
 	Editor,
 	EditorState,
 	Entity,
-	Modifier,
 	convertToRaw
 } from 'draft-js';
 
@@ -23,15 +23,24 @@ const editorStyle = {
 	borderRadius: '3px'
 };
 
-const isFocusedOnAtom = editorState => {
-	const selection = editorState.getSelection();
-	const blockKey = selection.getFocusKey();
-	const focusOffset = selection.getFocusOffset();
-	const contentState = editorState.getCurrentContent();
-	const block = contentState.getBlockForKey( blockKey );
-	const entity = block.getEntityAt( focusOffset );
+const Block = props => {
+	const { block } = props;
+	const { name } = Entity.get( block.getEntityAt( 0 ) ).getData();
 
-	return !! entity && 'ATOM' === Entity.get( entity ).type;
+	return (
+		<span>{ name }</span>
+	);
+};
+
+const blockRenderer = block => {
+	if ( block.getType() === 'atomic' ) {
+		return {
+			component: Block,
+			editable: false
+		};
+	}
+
+	return null;
 };
 
 export class TitleFormatEditor extends Component {
@@ -43,14 +52,10 @@ export class TitleFormatEditor extends Component {
 		};
 
 		this.onChange = this.onChange.bind( this );
-		this.addEntity = this.addEntity.bind( this );
+		this.addBlock = this.addBlock.bind( this );
 	}
 
 	onChange( editorState ) {
-		if ( isFocusedOnAtom( editorState ) ) {
-			console.log( 'In an atom, aborting!' );
-		}
-
 		this.setState(
 			{ editorState },
 			() => {
@@ -60,21 +65,19 @@ export class TitleFormatEditor extends Component {
 		);
 	}
 
-	addEntity( name ) {
+	addBlock( name ) {
 		return () => {
 			const { editorState } = this.state;
 
-			const atomizer = Entity.create( 'ATOM', 'IMMUTABLE', { name } );
+			const entity = Entity.create( 'TOKEN', 'IMMUTABLE', { name } );
 
-			this.onChange( EditorState.push(
-				editorState,
-				Modifier.applyEntity(
-					editorState.getCurrentContent(),
-					editorState.getSelection(),
-					atomizer
-				),
-				'apply-entity'
-			) );
+			this.onChange(
+				AtomicBlockUtils.insertAtomicBlock(
+					editorState,
+					entity,
+					' '
+				)
+			);
 		};
 	}
 
@@ -84,10 +87,11 @@ export class TitleFormatEditor extends Component {
 		return (
 			<div style={ editorStyle }>
 				<div style={ { marginBottom: '10px' } }>
-					<span style={ buttonStyle } onClick={ this.addEntity( 'Site Name' ) }>Site Name</span>
-					<span style={ buttonStyle } onClick={ this.addEntity( 'Tagline' ) }>Tagline</span>
+					<span style={ buttonStyle } onClick={ this.addBlock( 'Site Name' ) }>Site Name</span>
+					<span style={ buttonStyle } onClick={ this.addBlock( 'Tagline' ) }>Tagline</span>
 				</div>
 				<Editor
+					blockRendererFn={ blockRenderer }
 					editorState={ editorState }
 					onChange={ this.onChange }
 				/>
