@@ -26,15 +26,15 @@ class DocumentHead extends Component {
 			unreadCount
 		} = this.props;
 
-		if ( title !== undefined ) {
+		if ( 'title' in this.props ) {
 			this.props.setTitle( title );
 		}
 
-		if ( description !== undefined ) {
+		if ( 'description' in this.props ) {
 			this.props.setDescription( description );
 		}
 
-		if ( unreadCount !== undefined ) {
+		if ( 'unreadCount' in this.props ) {
 			this.props.setUnreadCount( String( unreadCount ) );
 		}
 
