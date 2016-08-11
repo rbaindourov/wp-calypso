@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import get from 'lodash/get';
+import { includes, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -53,6 +53,16 @@ export function getSectionName( state ) {
  */
 export function getSectionGroup( state ) {
 	return get( state.ui.section, 'group', null );
+}
+
+/**
+ * Returns true if the current section is a site-specific section.
+ *
+ * @param  {Object}  state Global state tree
+ * @return {Boolean}       Whether current section is site-specific
+ */
+export function isSiteSection( state ) {
+	return includes( [ 'sites', 'editor' ], getSectionGroup( state ) );
 }
 
 /**

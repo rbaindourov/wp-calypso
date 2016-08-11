@@ -1,13 +1,8 @@
 /**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { decodeEntities } from 'lib/formatting';
-import { getSelectedSiteId, getSectionGroup } from 'state/ui/selectors';
+import { getSelectedSiteId, isSiteSection } from 'state/ui/selectors';
 import { getSiteTitle } from 'state/sites/selectors';
 
 /**
@@ -39,38 +34,17 @@ export function getUnreadCount( state ) {
  * @return {?String}        Formatted title
  */
 export function getFormattedTitle( state ) {
+	let title = '';
+
 	const unreadCount = getUnreadCount( state );
-	const titleAndSiteName = getTitleAndSiteName( state );
-
-	const titleParts = [];
-
 	if ( unreadCount ) {
-		titleParts.push( '(' + unreadCount + ')' );
+		title += `(${ unreadCount }) `;
 	}
 
-	if ( titleAndSiteName ) {
-		titleParts.push( titleAndSiteName );
-	}
+	title += [
+		getTitle( state ),
+		isSiteSection( state ) && getSiteTitle( state, getSelectedSiteId( state ) )
+	].filter( Boolean ).join( ' ‹ ' );
 
-	const leftTitlePart = titleParts.join( ' ' );
-	return [ decodeEntities( leftTitlePart ), 'WordPress.com' ].join( ' — ' );
-}
-
-function getTitleAndSiteName( state ) {
-	const siteSpecificGroups = [ 'sites', 'editor' ];
-	const title = getTitle( state );
-	const siteId = getSelectedSiteId( state );
-	const siteTitle = getSiteTitle( state, siteId );
-	const titleParts = [];
-
-	if ( title ) {
-		titleParts.push( title );
-	}
-
-	// Display site name as title part only if we're in 'My Sites'
-	if ( includes( siteSpecificGroups, getSectionGroup( state ) ) && siteId ) {
-		titleParts.push( siteTitle );
-	}
-
-	return titleParts.join( ' \u2039 ' );
+	return `${ decodeEntities( title ) } — WordPress.com`;
 }
