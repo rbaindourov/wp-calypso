@@ -11,6 +11,7 @@ import page from 'page';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
+import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
 import { isGuidedTransferAvailableForAllSites } from 'state/sites/guided-transfer/selectors';
@@ -36,6 +37,7 @@ class GuidedTransferCard extends Component {
 		const {
 			translate,
 			isAvailable,
+			siteId,
 		} = this.props;
 
 		const setButtonRef = c => this._purchaseButton = c;
@@ -45,6 +47,7 @@ class GuidedTransferCard extends Component {
 
 		return <div>
 			<CompactCard>
+				<QuerySiteGuidedTransfer siteId={ siteId } />
 				<div className="guided-transfer-card__options"
 					onMouseEnter={ showPopup }
 					onMouseLeave={ hidePopup }
