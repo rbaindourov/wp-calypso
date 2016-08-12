@@ -1,9 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import {
-	AtomicBlockUtils,
+	CompositeDecorator,
 	Editor,
 	EditorState,
 	Entity,
+	Modifier,
 	convertToRaw
 } from 'draft-js';
 
@@ -23,24 +24,55 @@ const editorStyle = {
 	borderRadius: '3px'
 };
 
-const Block = props => {
-	const { block } = props;
-	const { name } = Entity.get( block.getEntityAt( 0 ) ).getData();
+const getWordAt = ( string, position ) => {
+	// Perform type conversions.
+	const str = String( string );
+	const pos = Number( position ) >>> 0;
 
-	return (
-		<span>{ name }</span>
-	);
-};
+	// Search for the word's beginning and end.
+	const left = str.slice( 0, pos + 1 ).search( /\S+$/ );
+	const right = str.slice( pos ).search( /\s/ );
 
-const blockRenderer = block => {
-	if ( block.getType() === 'atomic' ) {
+	// The last word in the string is a special case.
+	if ( right < 0 ) {
 		return {
-			component: Block,
-			editable: false
+			word: str.slice( left ),
+			begin: left,
+			end: str.length,
 		};
 	}
 
-	return null;
+	// Return the word, using the located bounds to extract it from the string.
+	return {
+		word: str.slice( left, right + pos ),
+		begin: left,
+		end: right + pos,
+	};
+};
+
+const getSearchText = ( editorState, selection ) => {
+	const anchorKey = selection.getAnchorKey();
+	const anchorOffset = selection.getAnchorOffset() - 1;
+	const currentContent = editorState.getCurrentContent();
+	const currentBlock = currentContent.getBlockForKey( anchorKey );
+	const blockText = currentBlock.getText();
+	return getWordAt( blockText, anchorOffset );
+};
+
+const Token = props => {
+	console.log( props );
+	const { name } = Entity.get( props.entityKey ).data;
+
+	const style = {
+		borderRadius: '3px',
+		backgroundColor: '#08c',
+		padding: '2px',
+		color: '#fff'
+	};
+
+	return (
+		<span style={ style }>{ name } x</span>
+	);
 };
 
 export class TitleFormatEditor extends Component {
@@ -48,11 +80,15 @@ export class TitleFormatEditor extends Component {
 		super( props );
 
 		this.state = {
-			editorState: EditorState.createEmpty()
+			editorState: EditorState.createEmpty( new CompositeDecorator( [ {
+				strategy: this.tokenStrategy,
+				component: Token
+			} ] ) )
 		};
 
 		this.onChange = this.onChange.bind( this );
-		this.addBlock = this.addBlock.bind( this );
+		this.addToken = this.addToken.bind( this );
+		this.tokenStrategy = this.tokenStrategy.bind( this );
 	}
 
 	onChange( editorState ) {
@@ -65,20 +101,61 @@ export class TitleFormatEditor extends Component {
 		);
 	}
 
-	addBlock( name ) {
+	addToken( name ) {
 		return () => {
 			const { editorState } = this.state;
+			const currentSelectionState = editorState.getSelection();
+			const { begin, end } = getSearchText( editorState, currentSelectionState );
 
-			const entity = Entity.create( 'TOKEN', 'IMMUTABLE', { name } );
+			// Get the selection of the :emoji: search text
+			const emojiTextSelection = currentSelectionState.merge( {
+				anchorOffset: begin,
+				focusOffset: end,
+			} );
 
-			this.onChange(
-				AtomicBlockUtils.insertAtomicBlock(
-					editorState,
-					entity,
-					' '
-				)
+			const entityKey = Entity.create( 'token', 'IMMUTABLE', { name } );
+
+			let emojiReplacedContent = Modifier.replaceText(
+				editorState.getCurrentContent(),
+				emojiTextSelection,
+				'',
+				null,
+				entityKey
 			);
+
+			// If the emoji is inserted at the end, a space is appended right after for
+			// a smooth writing experience.
+			const blockKey = emojiTextSelection.getAnchorKey();
+			const blockSize = editorState.getCurrentContent().getBlockForKey(blockKey).getLength();
+			if ( blockSize === end ) {
+				emojiReplacedContent = Modifier.insertText(
+					emojiReplacedContent,
+					emojiReplacedContent.getSelectionAfter(),
+					'',
+				);
+			}
+
+			const newEditorState = EditorState.push(
+				editorState,
+				emojiReplacedContent,
+				'insert-token',
+			);
+			return this.onChange( EditorState.forceSelection(
+				newEditorState,
+				emojiReplacedContent.getSelectionAfter()
+			) );
 		};
+	}
+
+	tokenStrategy( contentBlock, callback ) {
+		contentBlock.findEntityRanges(
+			charMeta => {
+				const entity = charMeta.getEntity();
+
+				return entity && 'token' === Entity.get( entity ).type;
+			},
+			callback
+		);
 	}
 
 	render() {
@@ -87,11 +164,10 @@ export class TitleFormatEditor extends Component {
 		return (
 			<div style={ editorStyle }>
 				<div style={ { marginBottom: '10px' } }>
-					<span style={ buttonStyle } onClick={ this.addBlock( 'Site Name' ) }>Site Name</span>
-					<span style={ buttonStyle } onClick={ this.addBlock( 'Tagline' ) }>Tagline</span>
+					<span style={ buttonStyle } onClick={ this.addToken( 'Site Name' ) }>Site Name</span>
+					<span style={ buttonStyle } onClick={ this.addToken( 'Tagline' ) }>Tagline</span>
 				</div>
 				<Editor
-					blockRendererFn={ blockRenderer }
 					editorState={ editorState }
 					onChange={ this.onChange }
 				/>
