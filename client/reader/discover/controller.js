@@ -8,7 +8,6 @@ import React from 'react';
  */
 import config from 'config';
 import route from 'lib/route';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
