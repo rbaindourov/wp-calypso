@@ -46,5 +46,8 @@ export function getFormattedTitle( state ) {
 		isSiteSection( state ) && getSiteTitle( state, getSelectedSiteId( state ) )
 	].filter( Boolean ).join( ' ‹ ' );
 
-	return `${ decodeEntities( title ) } — WordPress.com`;
+	return [
+		`${ decodeEntities( title ) }`,
+		'WordPress.com'
+	].filter( Boolean ).join( ' — ' );
 }

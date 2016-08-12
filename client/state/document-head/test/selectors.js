@@ -39,6 +39,29 @@ describe( 'selectors', () => {
 
 	describe( '#getFormattedTitle()', () => {
 		describe( 'for site-agnostic section', () => {
+			it( 'should return only "WordPress.com" if no title is set', () => {
+				const formattedTitle = getFormattedTitle( {
+					documentHead: {},
+					sites: {
+						items: {
+							2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'http://yourgroovydomain.com' }
+						}
+					},
+					ui: {
+						selectedSiteId: 2916284,
+						section: {
+							name: 'reader',
+							paths: [ '/', '/read' ],
+							module: 'reader',
+							group: 'reader',
+							secondary: true
+						}
+					}
+				} );
+
+				expect( formattedTitle ).to.equal( 'WordPress.com' );
+			} );
+
 			it( 'should return formatted title made up of section but not site name', () => {
 				const formattedTitle = getFormattedTitle( {
 					documentHead: {
@@ -92,6 +115,29 @@ describe( 'selectors', () => {
 		} );
 
 		describe( 'for site-specific section', () => {
+			it( 'should return only "WordPress.com", if no title is set and no site is selected', () => {
+				const formattedTitle = getFormattedTitle( {
+					documentHead: {},
+					sites: {
+						items: {
+							2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'http://yourgroovydomain.com' }
+						}
+					},
+					ui: {
+						selectedSiteId: null,
+						section: {
+							name: 'themes',
+							paths: [ '/design' ],
+							module: 'my-sites/themes',
+							group: 'sites',
+							secondary: true
+						}
+					}
+				} );
+
+				expect( formattedTitle ).to.equal( 'WordPress.com' );
+			} );
+
 			it( 'should return formatted title made up of section only, for no selected site', () => {
 				const formattedTitle = getFormattedTitle( {
 					documentHead: {
