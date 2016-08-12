@@ -25,8 +25,6 @@ export default {
 			feedStore = feedStreamFactory( 'site:' + blogId ),
 			mcKey = 'discover';
 
-		context.store.dispatch( setTitle( 'Discover' ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-
 		ensureStoreLoading( feedStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
@@ -37,6 +35,7 @@ export default {
 				key: 'site-' + blogId,
 				store: feedStore,
 				siteId: blogId,
+				title: 'Discover',
 				trackScrollPage: trackScrollPage.bind(
 					null,
 					basePath,

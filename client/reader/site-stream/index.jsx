@@ -60,9 +60,9 @@ const SiteStream = React.createClass( {
 		checkForRedirect( site );
 
 		let state = {
-			feed: feed,
-			site: site,
-			title: this.getTitle( site )
+			feed,
+			site,
+			title: props.title || this.getTitle( site )
 		};
 
 		return state;
