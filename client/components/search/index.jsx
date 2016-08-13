@@ -67,7 +67,8 @@ const Search = React.createClass( {
 	getInitialState: function() {
 		return {
 			keyword: this.props.initialValue || '',
-			isOpen: !! this.props.isOpen
+			isOpen: !! this.props.isOpen,
+			hasFocus: false
 		};
 	},
 
@@ -179,6 +180,8 @@ const Search = React.createClass( {
 		if ( this.props.onBlur ) {
 			this.props.onBlur();
 		}
+
+		this.setState( { hasFocus: false } );
 	},
 
 	onChange: function() {
@@ -257,6 +260,7 @@ const Search = React.createClass( {
 			input.value = setValue;
 		}
 
+		this.setState( { hasFocus: true } );
 		this.props.onSearchOpen( );
 	},
 
@@ -282,6 +286,7 @@ const Search = React.createClass( {
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
 			'no-close-button' : this.props.hideClose,
+			'has-focus' : this.state.hasFocus,
 			rtl: this.props.dir === 'rtl',
 			ltr: this.props.dir === 'ltr',
 			search: true
