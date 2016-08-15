@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
@@ -26,7 +28,7 @@ import {
 	featuresList,
 	plansList,
 	PLAN_FREE,
-	PLAN_JETPACK_FREE, 
+	PLAN_JETPACK_FREE,
 	PLAN_PERSONAL,
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
