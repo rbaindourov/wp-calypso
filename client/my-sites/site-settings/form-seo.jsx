@@ -236,6 +236,16 @@ export const SeoForm = React.createClass( {
 		trackSubmission();
 	},
 
+	getVerificationError( isPasteError ) {
+		return (
+			<FormInputValidation isError={ true } text={
+				isPasteError
+					? this.translate( 'Verification code should be copied and pasted into this field.' )
+					: this.translate( 'Invalid site verification tag.' )
+			} />
+		);
+	},
+
 	render() {
 		const {
 			description: siteDescription,
@@ -444,16 +454,6 @@ export const SeoForm = React.createClass( {
 					</form>
 				</Card>
 			</div>
-		);
-	},
-
-	getVerificationError( isPasteError ) {
-		return (
-			<FormInputValidation isError={ true } text={
-				isPasteError
-					? this.translate( 'Verification code should be copied and pasted into this field.' )
-					: this.translate( 'Invalid site verification tag.' )
-			} />
 		);
 	}
 } );
