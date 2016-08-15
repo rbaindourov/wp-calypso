@@ -16,6 +16,7 @@ export default React.createClass( {
 	displayName: 'InfoPopover',
 
 	propTypes: {
+		open: React.PropTypes.bool,
 		position: React.PropTypes.string,
 		className: React.PropTypes.string,
 		gaEventCategory: React.PropTypes.string,
@@ -42,7 +43,7 @@ export default React.createClass( {
 			<span onClick={ this._onClick } ref="infoPopover" className={ classNames( 'info-popover', { is_active: this.state.showPopover }, this.props.className ) }>
 				<Gridicon icon="info-outline" size={ 18 } />
 				<Popover
-					isVisible={ this.state.showPopover }
+					isVisible={ this.state.showPopover || this.props.open }
 					context={ this.refs && this.refs.infoPopover }
 					ignoreContext={ this.props.ignoreContext }
 					position={ this.props.position }
