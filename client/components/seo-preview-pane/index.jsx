@@ -18,6 +18,7 @@ import {
 /**
  * Internal dependencies
  */
+import UpgradeNudge from './upgrade-nudge'
 import ReaderPreview from 'components/seo/reader-preview';
 import FacebookPreview from 'components/seo/facebook-preview';
 import TwitterPreview from 'components/seo/twitter-preview';
@@ -189,7 +190,8 @@ export class SeoPreviewPane extends PureComponent {
 		const {
 			post,
 			site,
-			translate
+			translate,
+			showNudge
 		} = this.props;
 
 		const { selectedService } = this.state;
@@ -200,6 +202,12 @@ export class SeoPreviewPane extends PureComponent {
 			'facebook',
 			'twitter'
 		] );
+
+		if ( showNudge ) {
+			return (
+				<UpgradeNudge />
+			);
+		}
 
 		return (
 			<div className="seo-preview-pane">
@@ -256,7 +264,7 @@ const mapStateToProps = state => {
 			...post,
 			title: getSeoTitle( state, 'posts', { site, post } )
 		},
-		hideNudge: site && site.plan && hasBusinessPlan( site.plan )
+		showNudge: site && site.plan && ! hasBusinessPlan( site.plan )
 	};
 };
 
