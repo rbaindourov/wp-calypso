@@ -324,7 +324,7 @@ export const SeoForm = React.createClass( {
 
 				<SectionHeader label={ this.translate( 'Search Engine Optimization' ) }>
 				</SectionHeader>
-				<Card style={ { marginBottom: '32px'} }>
+				<Card>
 					{ this.translate(
 						'{{b}}WordPress.com has great SEO{{/b}} out of the box. All of our themes are optimized ' +
 						'for search engines, so you don\'t have to do anything extra. However, you can tweak ' +
@@ -345,7 +345,7 @@ export const SeoForm = React.createClass( {
 							<SectionHeader label={ this.translate( 'Page Title Structure' ) }>
 								{ submitButton }
 							</SectionHeader>
-							<Card style={ { marginBottom: '32px'} }>
+							<Card>
 								<p>
 								{ this.translate(
 									'You can set the structure of page titles for different sections of your site. ' +
@@ -357,41 +357,46 @@ export const SeoForm = React.createClass( {
 							</Card>
 						</div>
 					}
+
 					<SectionHeader label={ this.translate( 'Website Meta' ) }>
 						{ submitButton }
 					</SectionHeader>
-					<Card style={ { marginBottom: '32px'} }>
+					<Card>
 						<p>
 							{ this.translate(
 								'Craft a description of your Website up to 160 characters that will be used in ' +
-								'search engine results for your front page, and when you website is shared ' +
+								'search engine results for your front page, and when your website is shared ' +
 								'on social media sites.'
 							) }
 						</p>
-						<FormLabel htmlFor="seo_meta_description">{ this.translate( 'Front Page Meta Description' ) }</FormLabel>
-						<CountedTextarea
-							name="seo_meta_description"
-							type="text"
-							id="seo_meta_description"
-							value={ seoMetaDescription || '' }
-							disabled={ isDisabled }
-							maxLength="300"
-							acceptableLength={ 159 }
-							onChange={ this.handleMetaChange }
-						/>
-						{ hasHtmlTagError &&
-							<FormInputValidation isError={ true } text={ this.translate( 'HTML tags are not allowed.' ) } />
-						}
-						<div style={ { marginBottom: '24px'} } />
+						<p>
+							<FormLabel htmlFor="seo_meta_description">
+								{ this.translate( 'Front Page Meta Description' ) }
+							</FormLabel>
+							<CountedTextarea
+								name="seo_meta_description"
+								type="text"
+								id="seo_meta_description"
+								value={ seoMetaDescription || '' }
+								disabled={ isDisabled }
+								maxLength="300"
+								acceptableLength={ 159 }
+								onChange={ this.handleMetaChange }
+							/>
+							{ hasHtmlTagError &&
+								<FormInputValidation isError={ true } text={ this.translate( 'HTML tags are not allowed.' ) } />
+							}
+						</p>
 						<FormSettingExplanation>
-							<Button onClick={ this.showPreview } style={ { marginRight: '24px', float: 'left' } }>
+							<Button className="preview-button" onClick={ this.showPreview }>
 								{ this.translate( 'Show Previews' ) }
 							</Button>
-							<span style={ { lineHeight: '40px' } }>
+							<span className="preview-explanation">
 								{ this.translate( 'See how this will look on Google, Facebook, and Twitter.' ) }
 							</span>
 						</FormSettingExplanation>
 					</Card>
+
 					<SectionHeader label={ this.translate( 'Site Verification Services' ) }>
 						{ submitButton }
 					</SectionHeader>
@@ -430,58 +435,58 @@ export const SeoForm = React.createClass( {
 								onChange={ event => this.handleVerificationCodeChange( event, 'googleCode' ) } />
 							{ hasError( 'google' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
-
 						<FormFieldset>
-						<FormInput
-							prefix={ this.translate( 'Bing' ) }
-							name="verification_code_bing"
-							type="text"
-							value={ bingCode }
-							id="verification_code_bing"
-							spellCheck="false"
-							disabled={ isDisabled }
-							isError={ hasError( 'bing' ) }
-							placeholder={ getMetaTag( 'bing', placeholderTagContent ) }
-							onChange={ event => this.handleVerificationCodeChange( event, 'bingCode' ) } />
-						{ hasError( 'bing' ) && this.getVerificationError( showPasteError ) }
+							<FormInput
+								prefix={ this.translate( 'Bing' ) }
+								name="verification_code_bing"
+								type="text"
+								value={ bingCode }
+								id="verification_code_bing"
+								spellCheck="false"
+								disabled={ isDisabled }
+								isError={ hasError( 'bing' ) }
+								placeholder={ getMetaTag( 'bing', placeholderTagContent ) }
+								onChange={ event => this.handleVerificationCodeChange( event, 'bingCode' ) } />
+							{ hasError( 'bing' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 						<FormFieldset>
-						<FormInput
-							prefix={ this.translate( 'Pinterest' ) }
-							name="verification_code_pinterest"
-							type="text"
-							value={ pinterestCode }
-							id="verification_code_pinterest"
-							spellCheck="false"
-							disabled={ isDisabled }
-							isError={ hasError( 'pinterest' ) }
-							placeholder={ getMetaTag( 'pinterest', placeholderTagContent ) }
-							onChange={ event => this.handleVerificationCodeChange( event, 'pinterestCode' ) } />
-						{ hasError( 'pinterest' ) && this.getVerificationError( showPasteError ) }
+							<FormInput
+								prefix={ this.translate( 'Pinterest' ) }
+								name="verification_code_pinterest"
+								type="text"
+								value={ pinterestCode }
+								id="verification_code_pinterest"
+								spellCheck="false"
+								disabled={ isDisabled }
+								isError={ hasError( 'pinterest' ) }
+								placeholder={ getMetaTag( 'pinterest', placeholderTagContent ) }
+								onChange={ event => this.handleVerificationCodeChange( event, 'pinterestCode' ) } />
+							{ hasError( 'pinterest' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 						<FormFieldset>
-						<FormInput
-							prefix={ this.translate( 'Yandex' ) }
-							name="verification_code_yandex"
-							type="text"
-							value={ yandexCode }
-							id="verification_code_yandex"
-							spellCheck="false"
-							disabled={ isDisabled }
-							isError={ hasError( 'yandex' ) }
-							placeholder={ getMetaTag( 'yandex', placeholderTagContent ) }
-							onChange={ event => this.handleVerificationCodeChange( event, 'yandexCode' ) } />
-						{ hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
+							<FormInput
+								prefix={ this.translate( 'Yandex' ) }
+								name="verification_code_yandex"
+								type="text"
+								value={ yandexCode }
+								id="verification_code_yandex"
+								spellCheck="false"
+								disabled={ isDisabled }
+								isError={ hasError( 'yandex' ) }
+								placeholder={ getMetaTag( 'yandex', placeholderTagContent ) }
+								onChange={ event => this.handleVerificationCodeChange( event, 'yandexCode' ) } />
+							{ hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 						<FormFieldset>
-						<FormLabel htmlFor="seo_sitemap">{ this.translate( 'XML Sitemap' ) }</FormLabel>
-						<ExternalLink className="seo-sitemap" icon={ true } href={ sitemapUrl } target="_blank">{ sitemapUrl }</ExternalLink>
-						<FormSettingExplanation>
-							{ this.translate( 'Your site\'s sitemap is automatically sent to all major search engines for indexing.' ) }
-						</FormSettingExplanation>
+							<FormLabel htmlFor="seo_sitemap">{ this.translate( 'XML Sitemap' ) }</FormLabel>
+							<ExternalLink className="seo-sitemap" icon={ true } href={ sitemapUrl } target="_blank">{ sitemapUrl }</ExternalLink>
+							<FormSettingExplanation>
+								{ this.translate( 'Your site\'s sitemap is automatically sent to all major search engines for indexing.' ) }
+							</FormSettingExplanation>
 						</FormFieldset>
 					</Card>
 				</form>
+
 				<WebPreview showPreview={ showPreview }
 				            onClose={ this.hidePreview }
 				            previewUrl={ siteUrl }
