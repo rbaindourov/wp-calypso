@@ -7,9 +7,9 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-  getTitle,
-  getUnreadCount,
-  getFormattedTitle
+	getTitle,
+	getUnreadCount,
+	getFormattedTitle
 } from '../selectors';
 
 describe( 'selectors', () => {
