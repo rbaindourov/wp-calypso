@@ -6,8 +6,7 @@ var debug = require( 'debug' )( 'calypso:wpcom-undocumented:site' );
 /**
  * Internal dependencies.
  */
-var Export = require( './export' ),
-	i18n = require( 'lib/i18n-utils' );
+var i18n = require( 'lib/i18n-utils' );
 
 /**
  * Resources array
@@ -189,27 +188,6 @@ UndocumentedSite.prototype.postCounts = function( options, callback ) {
 	delete query.type;
 
 	return this.wpcom.req.get( '/sites/' + this._id + '/post-counts/' + type, query, callback );
-};
-
-/**
- * Create an `Export` instance
- *
- * @param  {[String]} id Export instance ID
- * @return {[Export]}    new Export instance
- */
-UndocumentedSite.prototype.export = function( id ) {
-	return new Export( id, this._id, this.wpcom );
-};
-
-/**
- * Add a new export
- *
- * @param {Function} fn Callback on completion of new export POST request
- * @return {Export}     new Export instance
- */
-UndocumentedSite.prototype.newExport = function( fn ) {
-	var exportObject = new Export( null, this._id, this.wpcom );
-	return exportObject.new( fn );
 };
 
 /**
