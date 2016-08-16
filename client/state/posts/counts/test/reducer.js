@@ -329,6 +329,62 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should track a newly saved draft post', () => {
+			let state = counts( undefined, {
+				type: POST_COUNTS_RECEIVE,
+				siteId: 2916284,
+				postType: 'post',
+				counts: {
+					all: { publish: 3, draft: 0, trash: 0 },
+					mine: { publish: 2, draft: 0, trash: 0 }
+				}
+			} );
+
+			state = counts( state, {
+				type: POST_SAVE,
+				siteId: 2916284,
+				postId: null,
+				post: { status: 'draft' }
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					post: {
+						all: { publish: 3, draft: 1, trash: 0 },
+						mine: { publish: 2, draft: 1, trash: 0 }
+					}
+				}
+			} );
+		} );
+
+		it( 'should track a newly saved published post', () => {
+			let state = counts( undefined, {
+				type: POST_COUNTS_RECEIVE,
+				siteId: 2916284,
+				postType: 'post',
+				counts: {
+					all: { publish: 3, draft: 0, trash: 0 },
+					mine: { publish: 2, draft: 0, trash: 0 }
+				}
+			} );
+
+			state = counts( state, {
+				type: POST_SAVE,
+				siteId: 2916284,
+				postId: null,
+				post: {}
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					post: {
+						all: { publish: 4, draft: 0, trash: 0 },
+						mine: { publish: 3, draft: 0, trash: 0 }
+					}
+				}
+			} );
+		} );
+
 		it( 'should transition an updated post\'s count to its new status when changed', () => {
 			let state = counts( undefined, {
 				type: POSTS_RECEIVE,

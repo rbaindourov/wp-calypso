@@ -171,11 +171,25 @@ export const counts = ( () => {
 		},
 		[ POST_SAVE ]: ( state, action ) => {
 			const { siteId, postId, post } = action;
-			if ( ! post.status ) {
+
+			let { status } = post;
+			if ( ! postId && ! status ) {
+				status = 'publish';
+			}
+
+			if ( ! status ) {
 				return state;
 			}
 
-			return transitionPostStateToStatus( state, siteId, postId, post.status );
+			if ( ! postId ) {
+				postStatuses[ getPostStatusKey( siteId ) ] = {
+					type: post.type || 'post',
+					author: { ID: currentUserId },
+					status
+				};
+			}
+
+			return transitionPostStateToStatus( state, siteId, postId, status );
 		},
 		[ POST_DELETE ]: ( state, action ) => {
 			return transitionPostStateToStatus( state, action.siteId, action.postId, 'deleted' );
