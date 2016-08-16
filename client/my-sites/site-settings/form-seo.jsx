@@ -31,12 +31,12 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import SearchPreview from 'components/seo/search-preview';
 import config from 'config';
 import { getSeoTitleFormatsForSite } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
+import WebPreview from 'components/web-preview';
 
 const serviceIds = {
 	google: 'google-site-verification',
@@ -246,6 +246,14 @@ export const SeoForm = React.createClass( {
 		);
 	},
 
+	showPreview() {
+		this.setState( { showPreview: true } );
+	},
+
+	hidePreview() {
+		this.setState( { showPreview: false } );
+	},
+
 	render() {
 		const {
 			description: siteDescription,
@@ -262,7 +270,8 @@ export const SeoForm = React.createClass( {
 			seoMetaDescription,
 			showPasteError = false,
 			hasHtmlTagError = false,
-			invalidCodes = []
+			invalidCodes = [],
+			showPreview = false
 		} = this.state;
 
 		let { googleCode, bingCode, pinterestCode, yandexCode } = this.state;
@@ -375,7 +384,7 @@ export const SeoForm = React.createClass( {
 						}
 						<div style={ { marginBottom: '24px'} } />
 						<FormSettingExplanation>
-							<Button submitting="" onClick="" style={ { marginRight: '24px', float: 'left' } }>
+							<Button onClick={ this.showPreview } style={ { marginRight: '24px', float: 'left' } }>
 								{ this.translate( 'Show Previews' ) }
 							</Button>
 							<span style={ { lineHeight: '40px' } }>
@@ -473,6 +482,13 @@ export const SeoForm = React.createClass( {
 						</FormFieldset>
 					</Card>
 				</form>
+				<WebPreview showPreview={ showPreview }
+				            onClose={ this.hidePreview }
+				            previewUrl={ siteUrl }
+				            showDeviceSwitcher={ false }
+				            showExternal={ false }
+				            defaultViewportDevice="seo"
+				/>
 			</div>
 		);
 	}
