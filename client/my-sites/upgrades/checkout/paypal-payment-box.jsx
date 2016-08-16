@@ -168,14 +168,9 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var classSet = classNames( {
-			'paypal-payment-box': true,
-			selected: this.props.selected === true
-		} );
-
 		return (
 			<PaymentBox
-				classSet={ classSet }
+				classSet="paypal-payment-box"
 				title={ this.translate( 'Secure Payment with PayPal' ) }>
 				{ this.content() }
 			</PaymentBox>

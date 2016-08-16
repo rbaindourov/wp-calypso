@@ -56,14 +56,9 @@ var CreditCardPaymentBox = React.createClass( {
 	},
 
 	render: function() {
-		var classSet = classNames( {
-			'credit-card-payment-box': true,
-			selected: this.props.selected === true
-		} );
-
 		return (
 			<PaymentBox
-				classSet={ classSet }
+				classSet="credit-card-payment-box"
 				title={ this.translate( 'Secure Payment' ) }>
 				{ this.content() }
 			</PaymentBox>

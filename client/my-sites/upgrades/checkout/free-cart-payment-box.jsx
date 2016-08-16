@@ -63,14 +63,9 @@ var FreeCartPaymentBox = React.createClass( {
 	},
 
 	render: function() {
-		var classSet = classNames( {
-			'credits-payment-box': true,
-			selected: this.props.selected
-		} );
-
 		return (
 			<PaymentBox
-				classSet={ classSet }
+				classSet="credits-payment-box"
 				title={ this.translate( 'Secure Payment' ) }>
 				{ this.content() }
 			</PaymentBox>
