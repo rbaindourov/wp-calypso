@@ -7,6 +7,9 @@ import {
 	Modifier,
 	convertToRaw
 } from 'draft-js';
+import {
+	get
+} from 'lodash';
 
 const buttonStyle = {
 	padding: '3px',
@@ -25,17 +28,17 @@ const editorStyle = {
 };
 
 const Token = props => {
-	const { name } = Entity.get( props.entityKey ).data;
-
 	const style = {
 		borderRadius: '3px',
 		backgroundColor: '#08c',
+		marginLeft: '2px',
+		marginRight: '2px',
 		padding: '2px',
 		color: '#fff'
 	};
 
 	return (
-		<span style={ style }>{ name } x</span>
+		<span style={ style }>{ props.children }</span>
 	);
 };
 
@@ -44,20 +47,26 @@ export class TitleFormatEditor extends Component {
 		super( props );
 
 		this.state = {
-			editorState: EditorState.createEmpty()
+			editorState: EditorState.createEmpty( new CompositeDecorator( [
+				{
+					strategy: this.renderTokens,
+					component: Token
+				}
+			] ) )
 		};
+
+		this.storeEditorReference = r => (this.editor = r);
+		this.focusEditor = () => this.editor.focus();
 
 		this.onChange = this.onChange.bind( this );
 		this.addToken = this.addToken.bind( this );
+		this.renderTokens = this.renderTokens.bind( this );
 	}
 
 	onChange( editorState ) {
 		this.setState(
 			{ editorState },
-			() => {
-				console.log( convertToRaw( this.state.editorState.getCurrentContent() ) );
-				console.log( this.state.editorState.toJS() );
-			}
+			this.focusEditor
 		);
 	}
 
@@ -71,7 +80,7 @@ export class TitleFormatEditor extends Component {
 			const contentState = Modifier.replaceText(
 				editorState.getCurrentContent(),
 				currentSelection,
-				' ',
+				name,
 				null,
 				tokenEntity
 			);
@@ -82,6 +91,21 @@ export class TitleFormatEditor extends Component {
 				'replace-characters'
 			) );
 		};
+	}
+
+	renderTokens( contentBlock, callback ) {
+		contentBlock.findEntityRanges(
+			character => {
+				const entity = character.getEntity();
+
+				if ( null === entity ) {
+					return false;
+				}
+
+				return 'TOKEN' === Entity.get( entity ).getType();
+			},
+			callback
+		);
 	}
 
 	render() {
@@ -96,6 +120,7 @@ export class TitleFormatEditor extends Component {
 				<Editor
 					editorState={ editorState }
 					onChange={ this.onChange }
+					ref={ this.storeEditorReference }
 				/>
 			</div>
 		);
