@@ -99,13 +99,15 @@ export default React.createClass( {
 			return noticeValues;
 		}
 		if ( this.props.noticeType === 'authorizeError' ) {
-			noticeValues.text = this.translate( 'Error authorizing your site. Please contact support.' );
-			noticeValues.status = 'is-error';
+			noticeValues.text = this.translate( 'Redirecting back to your site to complete authorization.' );
+			noticeValues.status = 'is-warning';
 			noticeValues.icon = 'notice';
 			return noticeValues;
 		}
 		if ( this.props.noticeType === 'alreadyConnectedByOtherUser' ) {
-			noticeValues.text = this.translate( 'This site is already connected to a different WordPress.com user, you need to disconnect that user before you can connect another.' );
+			noticeValues.text = this.translate(
+				'This site is already connected to a different WordPress.com user' +
+				' you need to disconnect that user before you can connect another.' );
 			noticeValues.status = 'is-warning';
 			noticeValues.icon = 'notice';
 			return noticeValues;
