@@ -64,10 +64,19 @@ export class TitleFormatEditor extends Component {
 	}
 
 	onChange( editorState ) {
+		const { editorState: oldState } = this.state;
+
+		const oldBlockCount = convertToRaw( oldState.getCurrentContent() ).blocks.length;
+		const newBlockCount = convertToRaw( editorState.getCurrentContent() ).blocks.length;
+
+		if ( newBlockCount > oldBlockCount ) {
+			return;
+		}
+
 		this.setState(
 			{ editorState },
 			() => {
-				this.focusEditor();
+				editorState.lastChangeType === 'add-token' && this.focusEditor();
 				console.log( convertToRaw( editorState.getCurrentContent() ) );
 			}
 		);
@@ -91,7 +100,7 @@ export class TitleFormatEditor extends Component {
 			this.onChange( EditorState.push(
 				editorState,
 				contentState,
-				'replace-characters'
+				'add-token'
 			) );
 		};
 	}
