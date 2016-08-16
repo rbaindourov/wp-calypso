@@ -31,8 +31,8 @@ const Token = props => {
 	const style = {
 		borderRadius: '3px',
 		backgroundColor: '#08c',
-		marginLeft: '2px',
-		marginRight: '2px',
+		marginLeft: '1px',
+		marginRight: '1px',
 		padding: '2px',
 		color: '#fff'
 	};
