@@ -36,7 +36,7 @@ export function getUnreadCount( state ) {
  * unreadCount, and selected site.
  *
  * @param  {Object}  state  Global state tree
- * @return {?String}        Formatted title
+ * @return {String}         Formatted title
  */
 export function getFormattedTitle( state ) {
 	let title = '';
