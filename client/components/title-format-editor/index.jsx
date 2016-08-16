@@ -66,7 +66,10 @@ export class TitleFormatEditor extends Component {
 	onChange( editorState ) {
 		this.setState(
 			{ editorState },
-			this.focusEditor
+			() => {
+				this.focusEditor();
+				console.log( convertToRaw( editorState.getCurrentContent() ) );
+			}
 		);
 	}
 
