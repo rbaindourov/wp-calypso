@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { compact } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { decodeEntities } from 'lib/formatting';
@@ -41,10 +46,10 @@ export function getFormattedTitle( state ) {
 		title += `(${ unreadCount }) `;
 	}
 
-	title += [
+	title += compact( [
 		getTitle( state ),
 		isSiteSection( state ) && getSiteTitle( state, getSelectedSiteId( state ) )
-	].filter( Boolean ).join( ' ‹ ' );
+	] ).join( ' ‹ ' );
 
 	if ( title ) {
 		title = decodeEntities( title ) + ' — ';
