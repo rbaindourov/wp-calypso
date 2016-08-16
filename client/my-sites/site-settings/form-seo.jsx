@@ -283,7 +283,7 @@ export const SeoForm = React.createClass( {
 		const seoTitle = siteDescription.length
 			? `${ siteTitle } | ${ siteDescription }`
 			: siteTitle;
-		const siteUrl = `https://${ slug }/`;
+		const siteUrl = `https://${ slug }`;
 		const sitemapUrl = `${ siteUrl }/sitemap.xml`;
 		const generalTabUrl = getGeneralTabUrl( slug );
 		const placeholderTagContent = '1234';
