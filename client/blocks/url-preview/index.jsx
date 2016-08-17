@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 
@@ -84,6 +84,20 @@ export default function urlPreview( WebPreview ) {
 			);
 		}
 	}
+
+	UrlPreview.propTypes = {
+		className: PropTypes.string,
+		showPreview: PropTypes.bool,
+		previewUrl: PropTypes.string,
+		selectedSite: PropTypes.object,
+		selectedSiteId: PropTypes.number,
+		selectedSiteNonce: PropTypes.string,
+		selectedSiteUrl: PropTypes.string,
+		clearCustomizations: PropTypes.func.isRequired,
+		resetPreviewType: PropTypes.func.isRequired,
+		setLayoutFocus: PropTypes.func.isRequired,
+		clearPreviewUrl: PropTypes.func.isRequired,
+	};
 
 	function mapStateToProps( state ) {
 		const selectedSiteId = getSelectedSiteId( state );
