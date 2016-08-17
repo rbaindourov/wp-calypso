@@ -30,7 +30,6 @@ import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
 import analyticsMixin from 'lib/mixins/analytics';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { abtest } from 'lib/abtest';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
 import {
 	getDomainsSuggestions,
@@ -44,8 +43,7 @@ const domains = wpcom.domains();
 const SUGGESTION_QUANTITY = 10;
 const INITIAL_SUGGESTION_QUANTITY = 2;
 
-const analytics = analyticsMixin( 'registerDomain' ),
-	searchVendor = abtest( 'domainSuggestionVendor' );
+const analytics = analyticsMixin( 'registerDomain' );
 
 let searchQueue = [],
 	searchStackTimer = null,
@@ -59,7 +57,6 @@ function getQueryObject( props ) {
 	return {
 		query: props.selectedSite.domain.split( '.' )[ 0 ],
 		quantity: SUGGESTION_QUANTITY,
-		vendor: searchVendor,
 		includeSubdomain: props.includeWordPressDotCom
 	};
 }
@@ -88,7 +85,7 @@ function reportSearchStats( { query, section, timestamp } ) {
 	}
 	lastSearchTimestamp = timestamp;
 	searchCount++;
-	analytics.recordEvent( 'searchFormSubmit', query, section, timeDiffFromLastSearchInSeconds, searchCount, searchVendor );
+	analytics.recordEvent( 'searchFormSubmit', query, section, timeDiffFromLastSearchInSeconds, searchCount );
 }
 
 function enqueueSearchStatReport( search ) {
@@ -209,12 +206,11 @@ const RegisterDomainStep = React.createClass( {
 		if ( ! queryObject ) {
 			return null;
 		}
-		const { query, quantity, vendor, includeSubdomain } = queryObject;
+		const { query, quantity, includeSubdomain } = queryObject;
 		return (
 			<QueryDomainsSuggestions
 				query={ query }
 				quantity={ quantity }
-				vendor={ vendor }
 				includeSubdomain={ includeSubdomain }
 			/>
 		);
@@ -344,8 +340,7 @@ const RegisterDomainStep = React.createClass( {
 					const query = {
 							query: domain,
 							quantity: SUGGESTION_QUANTITY,
-							include_wordpressdotcom: this.props.includeWordPressDotCom,
-							vendor: abtest( 'domainSuggestionVendor' )
+							include_wordpressdotcom: this.props.includeWordPressDotCom
 						},
 						timestamp = Date.now();
 

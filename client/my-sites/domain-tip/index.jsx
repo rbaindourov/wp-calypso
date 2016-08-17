@@ -9,7 +9,6 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { getSite, getSiteSlug } from 'state/sites/selectors';
 import { getDomainsSuggestions, } from 'state/domains/suggestions/selectors';
 import { currentUserHasFlag } from 'state/current-user/selectors';
@@ -25,8 +24,7 @@ function getQueryObject( site, siteSlug ) {
 	}
 	return {
 		query: siteSlug.split( '.' )[ 0 ],
-		quantity: 1,
-		vendor: abtest( 'domainSuggestionVendor' )
+		quantity: 1
 	};
 }
 
@@ -67,14 +65,13 @@ const DomainTip = React.createClass( {
 			return this.domainUpgradeNudge();
 		}
 		const classes = classNames( this.props.className, 'domain-tip' );
-		const { query, quantity, vendor } = getQueryObject( this.props.site, this.props.siteSlug );
-		const suggestion = this.props.suggestions ? this.props.suggestions[0] : null;
+		const { query, quantity } = getQueryObject( this.props.site, this.props.siteSlug );
+		const suggestion = this.props.suggestions ? this.props.suggestions[ 0 ] : null;
 		return (
 			<div className={ classes } >
 				<QueryDomainsSuggestions
 					query={ query }
-					quantity={ quantity }
-					vendor={ vendor } />
+					quantity={ quantity } />
 				{
 					suggestion
 						? <UpgradeNudge

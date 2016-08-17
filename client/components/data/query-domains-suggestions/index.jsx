@@ -55,7 +55,7 @@ class QueryDomainsSuggestions extends Component {
 
 QueryDomainsSuggestions.propTypes = {
 	query: PropTypes.string.isRequired,
-	vendor: PropTypes.string.isRequired,
+	vendor: PropTypes.string,
 	quantity: PropTypes.number,
 	includeSubdomain: PropTypes.bool,
 	requestingDomainsSuggestions: PropTypes.bool,
@@ -65,7 +65,8 @@ QueryDomainsSuggestions.propTypes = {
 QueryDomainsSuggestions.defaultProps = {
 	requestDomainsSuggestions: () => {},
 	includeSubdomain: false,
-	quantity: 5
+	quantity: 5,
+	vendor: 'domainsbot'
 };
 
 export default connect(
