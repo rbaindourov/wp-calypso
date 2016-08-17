@@ -7,9 +7,6 @@ import {
 	Modifier,
 	convertToRaw
 } from 'draft-js';
-import {
-	get
-} from 'lodash';
 
 const buttonStyle = {
 	padding: '3px',
@@ -55,7 +52,7 @@ export class TitleFormatEditor extends Component {
 			] ) )
 		};
 
-		this.storeEditorReference = r => (this.editor = r);
+		this.storeEditorReference = r => ( this.editor = r );
 		this.focusEditor = () => this.editor.focus();
 
 		this.onChange = this.onChange.bind( this );
@@ -82,7 +79,7 @@ export class TitleFormatEditor extends Component {
 		);
 	}
 
-	addToken( name ) {
+	addToken( title, name ) {
 		return () => {
 			const { editorState } = this.state;
 			const currentSelection = editorState.getSelection();
@@ -92,7 +89,7 @@ export class TitleFormatEditor extends Component {
 			const contentState = Modifier.replaceText(
 				editorState.getCurrentContent(),
 				currentSelection,
-				name,
+				title,
 				null,
 				tokenEntity
 			);
@@ -122,12 +119,20 @@ export class TitleFormatEditor extends Component {
 
 	render() {
 		const { editorState } = this.state;
+		const { tokens } = this.props;
 
 		return (
 			<div style={ editorStyle }>
 				<div style={ { marginBottom: '10px' } }>
-					<span style={ buttonStyle } onClick={ this.addToken( 'Site Name' ) }>Site Name</span>
-					<span style={ buttonStyle } onClick={ this.addToken( 'Tagline' ) }>Tagline</span>
+					{ tokens.map( ( { title, tokenName } ) => (
+						<span
+							key={ tokenName }
+							style={ buttonStyle }
+							onClick={ this.addToken( title, tokenName ) }
+						>
+							{ title }
+						</span>
+					) ) }
 				</div>
 				<Editor
 					editorState={ editorState }
@@ -138,5 +143,14 @@ export class TitleFormatEditor extends Component {
 		);
 	}
 }
+
+TitleFormatEditor.displayName = 'TitleFormatEditor';
+
+TitleFormatEditor.propTypes = {
+	tokens: PropTypes.arrayOf( PropTypes.shape( {
+		title: PropTypes.string.isRequired,
+		tokenName: PropTypes.string.isRequired
+	} ) ).isRequired
+};
 
 export default TitleFormatEditor;

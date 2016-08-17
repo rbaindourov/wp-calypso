@@ -132,7 +132,16 @@ export class MetaTitleEditor extends Component {
 
 		return (
 			<div className="meta-title-editor">
-				<TitleFormatEditor />
+				<TitleFormatEditor
+					tokens={
+						get( tokenMap, type, [] ).map(
+							name => ( {
+								title: get( getValidTokens( translate ), name, '' ),
+								tokenName: name
+							} )
+						)
+					}
+				/>
 				<SegmentedControl
 					initialSelected={ type }
 					options={ titleTypes( translate ) }
