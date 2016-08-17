@@ -4,7 +4,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import {
-	difference,
 	findKey,
 	get,
 	identity,
@@ -13,9 +12,6 @@ import {
 	map,
 	matches,
 	noop,
-	pick,
-	property,
-	values as valuesOf
 } from 'lodash';
 
 /**
@@ -23,7 +19,6 @@ import {
  */
 import SegmentedControl from 'components/segmented-control';
 import TitleFormatEditor from 'components/title-format-editor';
-import TokenField from 'components/token-field';
 import { getSeoTitleFormats } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { localize } from 'i18n-calypso';
@@ -113,25 +108,16 @@ export class MetaTitleEditor extends Component {
 	}
 
 	render() {
-		const { disabled, translate } = this.props;
-		const { type, titleFormats } = this.state;
-
-		const validTokens = getValidTokens( translate );
-
-		const values = map(
-			get( titleFormats, type, [] ),
-			token => 'string' !== token.type
-				? { ...token, value: validTokens[ token.type ] } // use translations of token names
-				: { ...token, isBorderless: true }               // and remove the styling on plain text
-		);
-
-		const suggestions = difference(
-			valuesOf( pick( validTokens, tokenMap[ type ] ) ), // grab list of translated tokens for this type
-			map( values, property( 'value' ) )                 // but remove tokens already in use in the format
-		);
+		const { translate } = this.props;
+		const { type } = this.state;
 
 		return (
 			<div className="meta-title-editor">
+				<SegmentedControl
+					initialSelected={ type }
+					options={ titleTypes( translate ) }
+					onSelect={ this.switchType }
+				/>
 				<TitleFormatEditor
 					tokens={
 						get( tokenMap, type, [] ).map(
@@ -141,18 +127,6 @@ export class MetaTitleEditor extends Component {
 							} )
 						)
 					}
-				/>
-				<SegmentedControl
-					initialSelected={ type }
-					options={ titleTypes( translate ) }
-					onSelect={ this.switchType }
-				/>
-				<TokenField
-					disabled={ disabled }
-					onChange={ this.updateTitleFormat }
-					saveTransform={ identity } // don't trim whitespace
-					suggestions={ suggestions }
-					value={ values }
 				/>
 			</div>
 		);
