@@ -5,6 +5,7 @@ import {
 	PREVIEW_URL_CLEAR,
 	PREVIEW_URL_SET,
 	PREVIEW_TYPE_SET,
+	PREVIEW_TYPE_RESET,
 } from 'state/action-types';
 
 export function setPreviewUrl( url ) {
@@ -24,5 +25,11 @@ export function setPreviewType( previewType ) {
 	return {
 		type: PREVIEW_TYPE_SET,
 		previewType,
+	};
+}
+
+export function resetPreviewType() {
+	return {
+		type: PREVIEW_TYPE_RESET,
 	};
 }

@@ -10,6 +10,7 @@ import {
 	PREVIEW_URL_CLEAR,
 	PREVIEW_URL_SET,
 	PREVIEW_TYPE_SET,
+	PREVIEW_TYPE_RESET,
 } from 'state/action-types';
 
 export function currentPreviewUrl( state = null, action ) {
@@ -22,10 +23,13 @@ export function currentPreviewUrl( state = null, action ) {
 	return state;
 }
 
-export function currentPreviewType( state = 'site-preview', action ) {
+const defaultPreviewType = 'site-preview';
+export function currentPreviewType( state = defaultPreviewType, action ) {
 	switch ( action.type ) {
 		case PREVIEW_TYPE_SET:
 			return action.previewType;
+		case PREVIEW_TYPE_RESET:
+			return defaultPreviewType;
 	}
 	return state;
 }
