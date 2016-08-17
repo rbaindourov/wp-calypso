@@ -59,7 +59,7 @@ const Search = React.createClass( {
 		onBlur: PropTypes.func,
 		searching: PropTypes.bool,
 		isOpen: PropTypes.bool,
-		dir: PropTypes.string,
+		dir: PropTypes.oneOf( [ 'ltr', 'rtl' ] ),
 		fitsContainer: PropTypes.bool,
 		hideClose: PropTypes.bool
 	},
@@ -265,8 +265,7 @@ const Search = React.createClass( {
 	},
 
 	render: function() {
-		let searchClass,
-			searchValue = this.state.keyword,
+		let searchValue = this.state.keyword,
 			placeholder = this.props.placeholder ||
 				i18n.translate( 'Search…', { textOnly: true } );
 
@@ -281,17 +280,16 @@ const Search = React.createClass( {
 			spellCheck: 'false'
 		};
 
-		searchClass = classNames( this.props.additionalClasses, {
+		const searchClass = classNames( this.props.additionalClasses, this.props.dir, {
 			'is-expanded-to-container': this.props.fitsContainer,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
 			'no-close-button' : this.props.hideClose,
 			'has-focus' : this.state.hasFocus,
-			rtl: this.props.dir === 'rtl',
-			ltr: this.props.dir === 'ltr',
 			search: true
 		} );
 
+		const gridIconClass = classNames ( 'search-open__icon', this.props.dir );
 		const isCloseButtonVisible = this.props.hideClose ? ' no-close-button ' : '';
 
 		return (
@@ -308,7 +306,7 @@ const Search = React.createClass( {
 					}
 					aria-controls={ 'search-component-' + this.state.instanceId }
 					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }>
-				<Gridicon icon="search" className={ 'search-open__icon' + ( this.props.dir ? ' ' + this.props.dir : '' ) }/>
+				<Gridicon icon="search" className={ gridIconClass }/>
 				</div>
 				<div className="search__input-fade">
 					<input
@@ -337,6 +335,8 @@ const Search = React.createClass( {
 	},
 
 	closeButton: function() {
+		const gridIconClass = classNames ( 'search-close__icon', this.props.dir );
+
 		if ( ! this.props.hideClose && ( this.state.keyword || this.state.isOpen ) ) {
 			return (
 				<div
@@ -346,7 +346,7 @@ const Search = React.createClass( {
 					onKeyDown={ this.closeListener }
 					aria-controls={ 'search-component-' + this.state.instanceId }
 					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }>
-					<Gridicon icon="cross" className={ 'search-close__icon' + ( this.props.dir ? ' ' + this.props.dir : '' ) } />
+					<Gridicon icon="cross" className={ gridIconClass } />
 				</div>
 			);
 		}
