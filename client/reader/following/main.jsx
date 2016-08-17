@@ -8,8 +8,10 @@ import React from 'react';
  */
 import Stream from 'reader/stream';
 
-const FollowingStream = props => (
-	<Stream { ...props } />
-);
+const FollowingStream = ( props ) => {
+	return (
+		<Stream { ...props } />
+	);
+};
 
 export default FollowingStream;
