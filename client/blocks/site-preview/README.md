@@ -11,3 +11,6 @@ Since there are many different ways that `WebPreview` can be used, this componen
 Right now `currentPreviewType` defaults to 'site-preview' so that the existing behavior is unchanged, but it is easy to add different preview settings for different keys.
 
 Different preview types might also require other data derived from the Redux store. For example, when the type is 'site-preview', you can change the URL which is loaded in the preview frame by using the action `setPreviewUrl()`.
+
+Lastly: When closing a preview it's a good idea to call the action `resetPreviewType()` to reset the `currentPreviewType` to the default. This is done automatically by `designPreview` and `urlPreview`, but any additional preview wrappers should do that as well.
+
