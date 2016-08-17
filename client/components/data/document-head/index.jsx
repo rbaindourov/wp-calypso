@@ -35,7 +35,7 @@ class DocumentHead extends Component {
 		}
 
 		if ( 'unreadCount' in this.props ) {
-			this.props.setUnreadCount( String( unreadCount ) );
+			this.props.setUnreadCount( unreadCount );
 		}
 
 		each( this.props.link, ( link ) => {
@@ -90,10 +90,7 @@ class DocumentHead extends Component {
 DocumentHead.propTypes = {
 	title: PropTypes.string,
 	description: PropTypes.string,
-	unreadCount: PropTypes.oneOfType( [
-		PropTypes.number,
-		PropTypes.string // E.g. '40+'
-	] ),
+	unreadCount: PropTypes.number,
 	link: PropTypes.array,
 	meta: PropTypes.array,
 	setTitle: PropTypes.func.isRequired,

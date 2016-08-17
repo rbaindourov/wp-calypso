@@ -28,20 +28,41 @@ export function getTitle( state ) {
  * @return {?String}        Unread count (string because it can be e.g. '40+')
  */
 export function getUnreadCount( state ) {
-	return state.documentHead.unreadCount;
+	return state.documentHead.unreadCount || 0;
+}
+
+/**
+ * Returns a count reflecting unread items, capped at a given value.
+ * Any value greater than the cap yields 'cap+'. Examples with cap=40 (default):
+ * '1', '20', '39', '40+'
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Object}  cap    Cap above which 'cap+' is returned
+ * @return {?String}        Unread count (string because it can be e.g. '40+')
+ */
+export function getCappedUnreadCount( state, cap = 40 ) {
+	const unreadCount = getUnreadCount( state );
+	if ( ! unreadCount ) {
+		return false;
+	}
+
+	return unreadCount <= cap
+		? String( unreadCount )
+		: `${ cap }+`;
 }
 
 /**
  * Returns the formatted document title, based on the currently set title,
- * unreadCount, and selected site.
+ * capped unreadCount, and selected site.
  *
  * @param  {Object}  state  Global state tree
+ * @param  {Object}  cap    Cap above which 'cap+' is returned for unread count
  * @return {String}         Formatted title
  */
-export function getFormattedTitle( state ) {
+export function getFormattedTitle( state, cap = 40 ) {
 	let title = '';
 
-	const unreadCount = getUnreadCount( state );
+	const unreadCount = getCappedUnreadCount( state, cap );
 	if ( unreadCount ) {
 		title += `(${ unreadCount }) `;
 	}

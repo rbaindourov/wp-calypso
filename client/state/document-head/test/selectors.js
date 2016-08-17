@@ -9,6 +9,7 @@ import { expect } from 'chai';
 import {
 	getTitle,
 	getUnreadCount,
+	getCappedUnreadCount,
 	getFormattedTitle
 } from '../selectors';
 
@@ -34,6 +35,18 @@ describe( 'selectors', () => {
 			} );
 
 			expect( unreadCount ).to.equal( 3 );
+		} );
+	} );
+
+	describe( '#getCappedUnreadCount()', () => {
+		it( 'should return the capped unread posts counter', () => {
+			const unreadCount = getCappedUnreadCount( {
+				documentHead: {
+					unreadCount: 45
+				}
+			}, 30 );
+
+			expect( unreadCount ).to.equal( '30+' );
 		} );
 	} );
 

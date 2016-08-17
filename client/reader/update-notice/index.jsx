@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { noop } from 'lodash';
 import classnames from 'classnames';
@@ -11,21 +12,20 @@ import classnames from 'classnames';
  */
 import DocumentHead from 'components/data/document-head';
 import Gridicon from 'components/gridicon';
+import { getCappedUnreadCount } from 'state/document-head/selectors';
 
 const UpdateNotice = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		count: React.PropTypes.number.isRequired,
-		onClick: React.PropTypes.func
+		onClick: React.PropTypes.func,
+		// connected props
+		cappedUnreadCount: React.PropTypes.string
 	},
 
 	getDefaultProps: function() {
 		return { onClick: noop };
-	},
-
-	countString: function() {
-		return this.props.count >= 40 ? '40+' : ( '' + this.props.count );
 	},
 
 	render: function() {
@@ -36,9 +36,9 @@ const UpdateNotice = React.createClass( {
 
 		return (
 			<div className={ counterClasses } onTouchTap={ this.handleClick } >
-				<DocumentHead unreadCount={ this.props.count ? this.countString() : '' } />
+				<DocumentHead unreadCount={ this.props.count } />
 				<Gridicon icon="arrow-up" size={ 18 } />
-				{ this.translate( '%s new post', '%s new posts', { args: [ this.countString() ], count: this.props.count } ) }
+				{ this.translate( '%s new post', '%s new posts', { args: [ this.props.cappedUnreadCount ], count: this.props.count } ) }
 			</div>
 		);
 	},
@@ -49,4 +49,8 @@ const UpdateNotice = React.createClass( {
 	}
 } );
 
-export default UpdateNotice;
+export default connect(
+	state => ( {
+		cappedUnreadCount: getCappedUnreadCount( state )
+	} )
+)( UpdateNotice );
