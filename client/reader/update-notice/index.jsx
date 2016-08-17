@@ -1,18 +1,18 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	noop = require( 'lodash/noop' ),
-	classnames = require( 'classnames' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import { noop } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var DocumentHead = require( 'components/data/document-head' ),
-	Gridicon = require( 'components/gridicon' );
+import DocumentHead from 'components/data/document-head';
+import Gridicon from 'components/gridicon';
 
-var UpdateNotice = React.createClass( {
+const UpdateNotice = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
@@ -29,7 +29,7 @@ var UpdateNotice = React.createClass( {
 	},
 
 	render: function() {
-		var counterClasses = classnames( {
+		const counterClasses = classnames( {
 			'reader-update-notice': true,
 			'is-active': this.props.count > 0
 		} );
@@ -49,4 +49,4 @@ var UpdateNotice = React.createClass( {
 	}
 } );
 
-module.exports = UpdateNotice;
+export default UpdateNotice;
